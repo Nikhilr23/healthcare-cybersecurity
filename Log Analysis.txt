@@ -1,0 +1,19 @@
+#!/bin/bash
+# Log Analysis Script
+
+echo "Starting log analysis..."
+LOG_FILE="/var/log/auth.log"
+
+echo "Checking for failed login attempts..."
+grep "Failed password" $LOG_FILE | awk '{print $1, $2, $3, $9, $11}' > failed_logins.txt
+echo "Failed login attempts saved to failed_logins.txt"
+
+echo "Checking for successful root logins..."
+grep "Accepted.*root" $LOG_FILE | awk '{print $1, $2, $3, $9, $11}' > root_logins.txt
+echo "Successful root logins saved to root_logins.txt"
+
+echo "Checking for SSH brute force attempts..."
+grep "Failed password" $LOG_FILE | awk '{print $11}' | sort | uniq -c | sort -nr | head -10 > brute_force_attempts.txt
+echo "Top brute force attempts saved to brute_force_attempts.txt"
+
+echo "Log analysis complete!"
